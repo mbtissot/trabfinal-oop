@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=Comodo
+comment1.params=name
+comment1.target=Comodo(java.lang.String)
+comment2.params=
+comment2.target=java.lang.String\ getName()
+comment3.params=device
+comment3.target=void\ addDevice(Device)
+comment4.params=
+comment4.target=java.util.List\ getDevices()
+comment5.params=
+comment5.target=java.lang.String\ toString()
+numComments=6

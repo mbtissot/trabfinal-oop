@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=Intense
+comment0.text=\n\ Write\ a\ description\ of\ class\ Intense\ here.\n\n\ @author\ (your\ name)\n\ @version\ (a\ version\ number\ or\ a\ date)\n
+comment1.params=name
+comment1.target=Intense(java.lang.String)
+comment1.text=\n\ Constructor\ for\ objects\ of\ class\ Intense\n
+comment2.params=
+comment2.target=int\ getIntensity()
+comment3.params=intens
+comment3.target=void\ setIntensity(int)
+comment4.params=
+comment4.target=java.lang.String\ toString()
+numComments=5
