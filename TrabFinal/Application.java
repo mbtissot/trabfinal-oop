@@ -76,7 +76,7 @@ public class Application extends JFrame {
                 
                 if(selDevice instanceof Thermo){
                     Thermo selThermo = (Thermo) selDevice;
-                    JSlider temp = new JSlider(JSlider.HORIZONTAL, -5, 28, selThermo.getTemp());
+                    JSlider temp = new JSlider(JSlider.HORIZONTAL, selThermo.getTMin(), selThermo.getTMax(), selThermo.getTemp());
                     onOff.setSelected(selThermo.getState());
                     value.setText(Integer.toString(selThermo.getTemp()));
                     temp.setMinorTickSpacing(1);
@@ -85,8 +85,8 @@ public class Application extends JFrame {
                     temp.setSnapToTicks(true);
                     
                     Hashtable labelTable = new Hashtable();
-                    labelTable.put(new Integer(-5), new JLabel("-5") );
-                    labelTable.put(new Integer(28), new JLabel("28") );
+                    labelTable.put(selThermo.getTMin(), new JLabel(Integer.toString(selThermo.getTMin())) );
+                    labelTable.put(selThermo.getTMax(), new JLabel(Integer.toString(selThermo.getTMax())) );
                     temp.setLabelTable( labelTable );
                     
                     JPanel panel = new JPanel();
@@ -156,7 +156,24 @@ public class Application extends JFrame {
                     boolean intensState = intens.isSelected();
                     if (nomeDev != null && !nomeDev.isEmpty()) {
                         if(tempState){
-                            Thermo device = new Thermo(nomeDev);
+                            // Pop up pedindo a temperatura minima e maxima do dispositivo
+                            JTextField min = new JTextField();
+                            JTextField max = new JTextField();
+                            JPanel popup = new JPanel();
+                            popup.setLayout(new GridLayout(2,2));
+                            popup.add(new JLabel("Temperatura minima:"));
+                            popup.add(new JLabel("Temperatura maxima:"));
+                            popup.add(min);
+                            popup.add(max);
+                            
+                            int con = JOptionPane.showConfirmDialog(null, popup, "Insira as temperaturas minima e maxima do dispositivo", JOptionPane.OK_CANCEL_OPTION);
+                            
+                            // Le as temperaturas
+                            int tmin = Integer.parseInt(min.getText());
+                            int tmax = Integer.parseInt(max.getText());
+                            
+                            // Cria o dispositivo
+                            Thermo device = new Thermo(nomeDev, tmin, tmax);
                             devicesModel.addElement(device);
                             updateDevicesList(comodo);
                         } else if(intensState){
