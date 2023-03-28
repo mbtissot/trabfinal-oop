@@ -14,9 +14,13 @@ public class Comodo {
     }
 
     public void addDevice(Device device) {
-        devices.add(device);
+        this.devices.add(device);
     }
 
+    public void rmDevice(Device device){
+        this.devices.remove(device);
+    }
+    
     public List<Device> getDevices() {
         return devices;
     }

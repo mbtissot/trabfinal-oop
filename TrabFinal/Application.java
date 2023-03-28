@@ -22,6 +22,7 @@ public class Application extends JFrame {
     private JButton addComodoButton = new JButton("+");
     private JButton addDeviceButton = new JButton("Add Device");
     private JButton editDeviceButton = new JButton("Edit");
+    private JButton removeDeviceButton = new JButton("X");
 
     public Application() {
         super("Gerenciador de Casa Inteligente");
@@ -47,6 +48,7 @@ public class Application extends JFrame {
         // Add the buttons
         buttons.add(addDeviceButton);
         buttons.add(editDeviceButton);
+        buttons.add(removeDeviceButton);
 
         // Add action listeners to the buttons
         addComodoButton.addActionListener(new ActionListener() {
@@ -119,6 +121,22 @@ public class Application extends JFrame {
             }
             });
 
+        removeDeviceButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Comodo comodo = (Comodo) comodosDropdown.getSelectedItem();
+                Device selDevice = (Device) devicesList.getSelectedValue();
+                int index = devicesList.getSelectedIndex();
+                DefaultListModel<Device> devicesModel = comodosMap.get(comodo);
+                if (index != -1) {
+                    devicesModel.remove(index);
+                }
+                
+                comodo.rmDevice(selDevice);
+                updateDevicesList(comodo);
+                }
+            });
+        
         addDeviceButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -175,14 +193,17 @@ public class Application extends JFrame {
                             // Cria o dispositivo
                             Thermo device = new Thermo(nomeDev, tmin, tmax);
                             devicesModel.addElement(device);
+                            comodo.addDevice(device);
                             updateDevicesList(comodo);
                         } else if(intensState){
                             Intense device = new Intense(nomeDev);
                             devicesModel.addElement(device);
+                            comodo.addDevice(device);
                             updateDevicesList(comodo);
                         } else{
                             Device device = new Device(nomeDev);
                             devicesModel.addElement(device);
+                            comodo.addDevice(device);
                             updateDevicesList(comodo);
                         }
                         }
