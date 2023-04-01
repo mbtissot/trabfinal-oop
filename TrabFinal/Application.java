@@ -13,6 +13,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import javax.swing.ButtonGroup;
 import java.util.Hashtable;
+import javax.swing.Timer;
 
 public class Application extends JFrame {
     private Map<Comodo, DefaultListModel<Device>> comodosMap = new HashMap<>();
@@ -29,6 +30,8 @@ public class Application extends JFrame {
         DefaultListModel<Object> devicesListModel = new DefaultListModel<>();
         setSize(400, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        Timer timerGlobal;
 
         // Create the UI components
         JPanel contentPane = new JPanel(new BorderLayout());
@@ -74,10 +77,15 @@ public class Application extends JFrame {
                 
                 JCheckBox onOff = new JCheckBox("Ligado: ");
                 JTextField value = new JTextField();
+                JTextField tempo = new JTextField("0");
+                JLabel valueLabel = new JLabel("Temperatura");
+                JLabel tempoLabel = new JLabel("Tempo");
+                tempo.setEnabled(false);
                 value.setPreferredSize(new Dimension(10,10));
                 
                 if(selDevice instanceof Thermo){
                     Thermo selThermo = (Thermo) selDevice;
+                    if(selThermo.getTimer()){tempo.setEnabled(true);}
                     JSlider temp = new JSlider(JSlider.HORIZONTAL, selThermo.getTMin(), selThermo.getTMax(), selThermo.getTemp());
                     onOff.setSelected(selThermo.getState());
                     value.setText(Integer.toString(selThermo.getTemp()));
@@ -92,11 +100,21 @@ public class Application extends JFrame {
                     temp.setLabelTable( labelTable );
                     
                     JPanel panel = new JPanel();
-                    panel.setLayout(new GridLayout(3, 1));
+                    
+                    panel.setLayout(new GridLayout(4, 2));
+                    
                     panel.add(onOff);
-                    panel.add(value);
+                    panel.add(valueLabel);
+                    
                     panel.add(temp);
-                    panel.setPreferredSize(new Dimension(35, 120));
+                    panel.add(value);
+                    
+                    panel.add(new JLabel(""));
+                    panel.add(tempoLabel);
+                    panel.add(new JLabel(""));
+                    panel.add(tempo);
+                    
+                    panel.setSize(new Dimension(150, 150));
                     
                     temp.addChangeListener(new ChangeListener() {
                         public void stateChanged(ChangeEvent e) {
@@ -111,9 +129,11 @@ public class Application extends JFrame {
                         //System.out.println(onOff.isSelected());
                         selThermo.setTemp(temp.getValue());
                         selThermo.setState(onOff.isSelected());
+                        if(selThermo.getTimer()){selThermo.setTimeLeft(Integer.parseInt(tempo.getText()));}
                         updateDevicesList(comodo);
                     }
                 }
+                
                 /*if(selDevice instanceof Intense){
                     //chama funcao que retorna state, insensity
                     
@@ -121,6 +141,28 @@ public class Application extends JFrame {
             }
             });
 
+        ActionListener al=new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                Comodo comodo = (Comodo) comodosDropdown.getSelectedItem();
+                if(comodo!=null){
+                    for(Device device: comodo.getDevices()){
+                        //int selDeviceIndex =  devicesList.getSelectedIndex();
+                        devicesList.repaint();
+                        //updateDevicesList(comodo);
+                        //devicesList.setSelectedIndex(selDeviceIndex);
+                        if(device.getTimer() && device.getState() && (device.getTimeLeft()!=0)){
+                            device.setTimeLeft(device.getTimeLeft()-1);
+                        }
+                        if(device.getTimeLeft()==0){
+                        device.setState(false);}
+                    }
+                }}
+            };
+            
+            Timer timer = new Timer(1000, al);
+            timer.start();
+            
+        
         removeDeviceButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -144,6 +186,7 @@ public class Application extends JFrame {
                 JTextField nome = new JTextField();
                 JCheckBox temp = new JCheckBox("Thermo: ");
                 JCheckBox intens = new JCheckBox("Intensity: ");
+                JCheckBox timer = new JCheckBox("Timer: ");
 
             temp.addItemListener(new ItemListener() {
                 public void itemStateChanged(ItemEvent e) {
@@ -165,6 +208,7 @@ public class Application extends JFrame {
                 panel.add(nome);
                 panel.add(temp);
                 panel.add(intens);
+                panel.add(timer);
                 
                 int confirm = JOptionPane.showConfirmDialog(null, panel, "Insira o nome do device, e as propriedades dele", JOptionPane.OK_CANCEL_OPTION);
                 if (comodo != null && confirm == JOptionPane.OK_OPTION) {
@@ -172,6 +216,7 @@ public class Application extends JFrame {
                     String nomeDev = nome.getText();
                     boolean tempState = temp.isSelected();
                     boolean intensState = intens.isSelected();
+                    boolean timerState = timer.isSelected();
                     if (nomeDev != null && !nomeDev.isEmpty()) {
                         if(tempState){
                             // Pop up pedindo a temperatura minima e maxima do dispositivo
@@ -191,17 +236,33 @@ public class Application extends JFrame {
                             int tmax = Integer.parseInt(max.getText());
                             
                             // Cria o dispositivo
-                            Thermo device = new Thermo(nomeDev, tmin, tmax);
+                            Thermo device;
+                            if(timerState){
+                                device = new Thermo(nomeDev, tmin, tmax, true);
+                            }else{
+                                device = new Thermo(nomeDev, tmin, tmax, false);
+                            }
+                            
                             devicesModel.addElement(device);
                             comodo.addDevice(device);
                             updateDevicesList(comodo);
                         } else if(intensState){
-                            Intense device = new Intense(nomeDev);
+                            Intense device;
+                            if(timerState){
+                                device = new Intense(nomeDev, true);
+                            }else{
+                                 device = new Intense(nomeDev, false);
+                            }
                             devicesModel.addElement(device);
                             comodo.addDevice(device);
                             updateDevicesList(comodo);
                         } else{
-                            Device device = new Device(nomeDev);
+                            Device device;
+                            if(timerState){
+                                device = new Device(nomeDev, true);
+                            }else{
+                                device = new Device(nomeDev, false);
+                            }
                             devicesModel.addElement(device);
                             comodo.addDevice(device);
                             updateDevicesList(comodo);
@@ -231,6 +292,7 @@ public class Application extends JFrame {
 
     private void updateDevicesList(Comodo comodo) {
         DefaultListModel<Device> devicesModel = comodosMap.get(comodo);
+        
         devicesList.setModel(devicesModel);
     }
 

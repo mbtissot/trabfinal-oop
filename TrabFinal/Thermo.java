@@ -11,16 +11,17 @@ public class Thermo extends Device
     private int temperature;
     private int tMin;
     private int tMax;
-
+    private boolean hasTimer;
     /**
      * Constructor for objects of class Thermo
      */
-    public Thermo(String name, int tMin, int tMax)
+    public Thermo(String name, int tMin, int tMax, boolean timer)
     {
-        super(name);     
+        super(name, timer);     
         this.tMax = tMax;
         this.tMin = tMin;
         this.temperature = (tMin+tMax)/2;
+        
     }
 
     public int getTemp(){
@@ -48,6 +49,6 @@ public class Thermo extends Device
     }
     
     public String toString() {
-        return super.toString() + " - T:" + this.temperature;
+        return super.toString() + " - T:" + this.temperature + " - Tempo: " + this.getTimeLeft();
     }
 }

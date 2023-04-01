@@ -11,9 +11,9 @@ public class Intense extends Device
     /**
      * Constructor for objects of class Intense
      */
-    public Intense(String name)
+    public Intense(String name, boolean timer)
     {
-        super(name);
+        super(name, timer);
         this.intensity = 0;
     }
 
@@ -26,6 +26,6 @@ public class Intense extends Device
     }
     
     public String toString() {
-        return super.toString() + " - I:" + this.intensity;
+        return super.toString() + " - I:" + this.intensity + " - Tempo: " + this.getTimeLeft();
     }
 }

@@ -1,8 +1,8 @@
 #BlueJ class context
 comment0.target=Thermo
 comment0.text=\n\ Classe\ para\ dispositivos\ com\ temperatura\ controlada\ (ares\ condicionados,\ fornos,\ geladeiras,\ etc.)\n\n\ @author\ (your\ name)\n\ @version\ (a\ version\ number\ or\ a\ date)\n
-comment1.params=name\ tMin\ tMax
-comment1.target=Thermo(java.lang.String,\ int,\ int)
+comment1.params=name\ tMin\ tMax\ timer
+comment1.target=Thermo(java.lang.String,\ int,\ int,\ boolean)
 comment1.text=\n\ Constructor\ for\ objects\ of\ class\ Thermo\n
 comment2.params=
 comment2.target=int\ getTemp()
