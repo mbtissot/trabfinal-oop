@@ -10,4 +10,6 @@ comment3.params=intens
 comment3.target=void\ setIntensity(int)
 comment4.params=
 comment4.target=java.lang.String\ toString()
-numComments=5
+comment5.params=
+comment5.target=void\ countdown()
+numComments=6

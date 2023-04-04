@@ -1,4 +1,4 @@
-public class Device implements Timer{
+public abstract class Device implements Timer{
     private String name;
     private boolean state;
     private boolean hasTimer;
@@ -46,9 +46,5 @@ public class Device implements Timer{
     @Override
     public String toString() {
         return name + " - " + this.stateToString();
-    }
-    
-    public void countdown(int a){
-        //
     }
 }

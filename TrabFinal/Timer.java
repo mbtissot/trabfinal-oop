@@ -7,5 +7,5 @@
  */
 public interface Timer
 {
-    void countdown(int a);
+    void countdown();
 }

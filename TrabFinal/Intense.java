@@ -22,10 +22,20 @@ public class Intense extends Device
     }
     
     public void setIntensity(int intens){
-        this.intensity = intens;    
+        this.intensity = intens;
     }
     
     public String toString() {
-        return super.toString() + " - I:" + this.intensity + " - Tempo: " + this.getTimeLeft();
+        String timer = "";
+        if(this.getTimer()){
+            timer = timer+" - Tempo: " + this.getTimeLeft();
+        }
+        return super.toString() + " - I:" + this.intensity + timer;
+    }
+    
+    public void countdown(){
+        if(this.getTimeLeft()>0){
+            this.setTimeLeft(this.getTimeLeft()-1);
+        }
     }
 }

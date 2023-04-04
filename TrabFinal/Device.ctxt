@@ -2,8 +2,6 @@
 comment0.target=Device
 comment1.params=name\ timer
 comment1.target=Device(java.lang.String,\ boolean)
-comment10.params=a
-comment10.target=void\ countdown(int)
 comment2.params=
 comment2.target=java.lang.String\ getName()
 comment3.params=
@@ -20,4 +18,4 @@ comment8.params=newTimeLeft
 comment8.target=void\ setTimeLeft(int)
 comment9.params=
 comment9.target=java.lang.String\ toString()
-numComments=11
+numComments=10

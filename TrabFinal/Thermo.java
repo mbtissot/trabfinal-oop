@@ -49,6 +49,16 @@ public class Thermo extends Device
     }
     
     public String toString() {
-        return super.toString() + " - T:" + this.temperature + " - Tempo: " + this.getTimeLeft();
+        String timer = "";
+        if(this.getTimer()){
+            timer = timer+" - Tempo: " + this.getTimeLeft();
+        }
+        return super.toString() + " - T:" + this.temperature + timer;
+    }
+    
+    public void countdown(){
+        if(this.getTimeLeft()>0){
+            this.setTimeLeft(this.getTimeLeft()-1);
+        }
     }
 }

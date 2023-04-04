@@ -76,15 +76,17 @@ public class Application extends JFrame {
                 Device selDevice = (Device) devicesList.getSelectedValue();
                 
                 JCheckBox onOff = new JCheckBox("Ligado: ");
-                JTextField value = new JTextField();
                 JTextField tempo = new JTextField("0");
-                JLabel valueLabel = new JLabel("Temperatura");
                 JLabel tempoLabel = new JLabel("Tempo");
                 tempo.setEnabled(false);
-                value.setPreferredSize(new Dimension(10,10));
                 
                 if(selDevice instanceof Thermo){
                     Thermo selThermo = (Thermo) selDevice;
+                    
+                    JLabel valueLabel = new JLabel("Temperatura");
+                    JTextField value = new JTextField();
+                    value.setPreferredSize(new Dimension(10,10));
+                    
                     if(selThermo.getTimer()){tempo.setEnabled(true);}
                     JSlider temp = new JSlider(JSlider.HORIZONTAL, selThermo.getTMin(), selThermo.getTMax(), selThermo.getTemp());
                     onOff.setSelected(selThermo.getState());
@@ -116,6 +118,8 @@ public class Application extends JFrame {
                     
                     panel.setSize(new Dimension(150, 150));
                     
+                    tempo.setText(""+selThermo.getTimeLeft());
+                    
                     temp.addChangeListener(new ChangeListener() {
                         public void stateChanged(ChangeEvent e) {
                             value.setText(Integer.toString(temp.getValue()));
@@ -134,10 +138,97 @@ public class Application extends JFrame {
                     }
                 }
                 
-                /*if(selDevice instanceof Intense){
-                    //chama funcao que retorna state, insensity
+                if(selDevice instanceof Intense){
+                    Intense selIntense = (Intense) selDevice;
+                    if(selIntense.getTimer()){tempo.setEnabled(true);}
+                    ButtonGroup intensity = new ButtonGroup();
+                    JRadioButton zero = new JRadioButton("0");
+                    zero.setActionCommand("0");
+                    JRadioButton um = new JRadioButton("1");
+                    um.setActionCommand("1");
+                    JRadioButton dois = new JRadioButton("2");
+                    dois.setActionCommand("2");
+                    JRadioButton tres = new JRadioButton("3");
+                    tres.setActionCommand("3");
                     
-                }*/
+                    intensity.add(zero); intensity.add(um); intensity.add(dois); intensity.add(tres); 
+                    
+                    JPanel panel = new JPanel();
+                    
+                    panel.setLayout(new GridLayout(3, 4));
+                    
+                    panel.add(onOff);
+                    panel.add(new JLabel(""));
+                    panel.add(new JLabel(""));
+                    panel.add(new JLabel(""));
+                    
+                    panel.add(zero);
+                    panel.add(um);
+                    panel.add(dois);
+                    panel.add(tres);
+                    
+                    panel.add(tempo);
+                    
+                    tempo.setText(""+selIntense.getTimeLeft());
+                    
+                    panel.add(new JLabel(""));
+                    panel.add(new JLabel(""));
+                    panel.add(new JLabel(""));
+                    
+                    panel.setSize(new Dimension(150, 150));
+                    
+                    onOff.setSelected(selIntense.getState());
+                    
+                    if(!selIntense.getState()){
+                        zero.setSelected(true);
+                    } else {
+                        switch(selIntense.getIntensity()){
+                            case 1:
+                                um.setSelected(true);
+                                break;
+                            case 2:
+                                dois.setSelected(true);
+                                break;
+                            case 3:
+                                tres.setSelected(true);
+                                break;
+                        }
+                    }
+                    
+                    int abc = JOptionPane.showConfirmDialog(null, panel, "Edita as propriedades do dispositivo", JOptionPane.OK_CANCEL_OPTION);
+                    if(abc==JOptionPane.OK_OPTION){
+                        selIntense.setIntensity(Integer.parseInt(intensity.getSelection().getActionCommand()));
+                        selIntense.setState(onOff.isSelected());
+                        if(selIntense.getTimer()){selIntense.setTimeLeft(Integer.parseInt(tempo.getText()));}
+                        updateDevicesList(comodo);
+                    }
+                }
+                
+                if(selDevice instanceof onOff){
+                    onOff selOnOff = (onOff) selDevice;
+                    if(selOnOff.getTimer()){tempo.setEnabled(true);}
+                    JPanel panel = new JPanel();
+                    
+                    panel.setLayout(new GridLayout(2, 2));
+                    
+                    panel.add(onOff);
+                    panel.add(new JLabel(""));
+                    panel.add(tempo);
+                    panel.add(new JLabel(""));
+                    
+                    tempo.setText(""+selOnOff.getTimeLeft());
+                    
+                    panel.setSize(new Dimension(150, 150));
+                    
+                    onOff.setSelected(selOnOff.getState());
+
+                    int abc = JOptionPane.showConfirmDialog(null, panel, "Edita as propriedades do dispositivo", JOptionPane.OK_CANCEL_OPTION);
+                    if(abc==JOptionPane.OK_OPTION){
+                        selOnOff.setState(onOff.isSelected());
+                        if(selOnOff.getTimer()){selOnOff.setTimeLeft(Integer.parseInt(tempo.getText()));}
+                        updateDevicesList(comodo);
+                    }
+                }
             }
             });
 
@@ -146,14 +237,11 @@ public class Application extends JFrame {
                 Comodo comodo = (Comodo) comodosDropdown.getSelectedItem();
                 if(comodo!=null){
                     for(Device device: comodo.getDevices()){
-                        //int selDeviceIndex =  devicesList.getSelectedIndex();
                         devicesList.repaint();
-                        //updateDevicesList(comodo);
-                        //devicesList.setSelectedIndex(selDeviceIndex);
                         if(device.getTimer() && device.getState() && (device.getTimeLeft()!=0)){
-                            device.setTimeLeft(device.getTimeLeft()-1);
+                            device.countdown();
                         }
-                        if(device.getTimeLeft()==0){
+                        if(device.getTimeLeft()==0 && device.getTimer()){
                         device.setState(false);}
                     }
                 }}
@@ -257,11 +345,11 @@ public class Application extends JFrame {
                             comodo.addDevice(device);
                             updateDevicesList(comodo);
                         } else{
-                            Device device;
+                            onOff device;
                             if(timerState){
-                                device = new Device(nomeDev, true);
+                                device = new onOff(nomeDev, true);
                             }else{
-                                device = new Device(nomeDev, false);
+                                device = new onOff(nomeDev, false);
                             }
                             devicesModel.addElement(device);
                             comodo.addDevice(device);
