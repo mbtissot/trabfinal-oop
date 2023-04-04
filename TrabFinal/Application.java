@@ -1,18 +1,8 @@
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.swing.*;
-import javax.swing.event.*;
+import java.util.*;
 import java.awt.*;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
-import javax.swing.ButtonGroup;
-import java.util.Hashtable;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.event.*;
 import javax.swing.Timer;
 
 public class Application extends JFrame {
@@ -39,21 +29,22 @@ public class Application extends JFrame {
         JPanel body = new JPanel(new BorderLayout());
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        // Add the header components
+        // Comopoentes do header
         header.add(new JLabel("Selecione um Comodo:"));
         header.add(comodosDropdown);
         header.add(addComodoButton);
 
-        // Add the body components
-        body.add(new JLabel("Things:"));
+        // Componente q vai conter os Devices do Comodo
         body.add(devicesScrollPane);
 
-        // Add the buttons
+        // Adicionando botoes
         buttons.add(addDeviceButton);
         buttons.add(editDeviceButton);
         buttons.add(removeDeviceButton);
+        // TODO Botao que salva tudo p arquivo
+        //TODO Botao que lista todos
 
-        // Add action listeners to the buttons
+        // Action listener p botoes
         addComodoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -70,7 +61,6 @@ public class Application extends JFrame {
         
         editDeviceButton.addActionListener(new ActionListener() {
             @Override
-            // TODO: Colocar valor variavel. P geladeira vs ar condicionado
             public void actionPerformed(ActionEvent e) {
                 Comodo comodo = (Comodo) comodosDropdown.getSelectedItem();
                 Device selDevice = (Device) devicesList.getSelectedValue();
@@ -128,9 +118,6 @@ public class Application extends JFrame {
                     
                     int abc = JOptionPane.showConfirmDialog(null, panel, "Insira o nome do device, e as propriedades dele", JOptionPane.OK_CANCEL_OPTION);
                     if(abc==JOptionPane.OK_OPTION){
-                        //System.out.println("Funfou");
-                        //System.out.println(temp.getValue());
-                        //System.out.println(onOff.isSelected());
                         selThermo.setTemp(temp.getValue());
                         selThermo.setState(onOff.isSelected());
                         if(selThermo.getTimer()){selThermo.setTimeLeft(Integer.parseInt(tempo.getText()));}
@@ -371,7 +358,7 @@ public class Application extends JFrame {
             }
         });
 
-        // Add the components to the content pane
+        // Adiciona componentes p contentPane
         contentPane.add(header, BorderLayout.NORTH);
         contentPane.add(body, BorderLayout.CENTER);
         contentPane.add(buttons, BorderLayout.SOUTH);
@@ -380,7 +367,6 @@ public class Application extends JFrame {
 
     private void updateDevicesList(Comodo comodo) {
         DefaultListModel<Device> devicesModel = comodosMap.get(comodo);
-        
         devicesList.setModel(devicesModel);
     }
 
