@@ -1,6 +1,6 @@
 #BlueJ class context
 comment0.target=Timer
-comment0.text=\n\ Write\ a\ description\ of\ interface\ Timer\ here.\n\n\ @author\ (your\ name)\n\ @version\ (a\ version\ number\ or\ a\ date)\n
+comment0.text=\n\ Interface\ Timer\ define\ os\ metodos\ para\ fazer\ o\ tempo\ contar.\n\n\ @author\ Matheus\ B\ Tissot\ -\ 00305657\n\ @version\ APRIL\ -\ 2023\n
 comment1.params=
 comment1.target=void\ countdown()
 numComments=2

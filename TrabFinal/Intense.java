@@ -1,13 +1,13 @@
-
 /**
- * Write a description of class Intense here.
+ * Classe Intense implementa objetos que alem de ligar e desligar, possuem uma intensidade.
+ * Exemplo: ventiladores possuem, normalmente, tres 'forças'.
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Matheus B Tissot - 00305657
+ * @version APRIL - 2023
  */
 public class Intense extends Device
 {
-    private int intensity;
+    private int intensity; // Intensidade do dispositivo
     /**
      * Constructor for objects of class Intense
      */
@@ -17,6 +17,7 @@ public class Intense extends Device
         this.intensity = 0;
     }
 
+    /** Getters e setters */
     public int getIntensity(){
         return this.intensity;
     }
@@ -24,18 +25,11 @@ public class Intense extends Device
     public void setIntensity(int intens){
         this.intensity = intens;
     }
+    /**Fim dos getters e setters */
     
+    /** Metodo toString mostra as informaçoes mostradas pelo toString do Device + a intensidade do Device
+       */
     public String toString() {
-        String timer = "";
-        if(this.getTimer()){
-            timer = timer+" - Tempo: " + this.getTimeLeft();
-        }
-        return super.toString() + " - I:" + this.intensity + timer;
-    }
-    
-    public void countdown(){
-        if(this.getTimeLeft()>0){
-            this.setTimeLeft(this.getTimeLeft()-1);
-        }
+        return super.toString() + " - I:" + this.intensity;
     }
 }

@@ -1,28 +1,17 @@
-
 /**
- * Write a description of class onOff here.
+ * Classe onOff implementa objetos que ligam e desligam.
+ * Exemplo: lampadas.
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Matheus B Tissot - 00305657
+ * @version APRIL - 2023
  */
 public class onOff extends Device
 {
     public onOff(String name, boolean hasTimer){
         super(name, hasTimer);
-        
-    }
-    
-    public void countdown(){
-        if(this.getTimeLeft()>0){
-            this.setTimeLeft(this.getTimeLeft()-1);
-        }
     }
     
     public String toString() {
-        String timer = "";
-        if(this.getTimer()){
-            timer = timer+" - Tempo: " + this.getTimeLeft();
-        }
-        return super.toString() + timer;
+        return super.toString();
     }
 }

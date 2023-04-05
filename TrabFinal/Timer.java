@@ -1,9 +1,8 @@
-
 /**
- * Write a description of interface Timer here.
+ * Interface Timer define os metodos para fazer o tempo contar.
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Matheus B Tissot - 00305657
+ * @version APRIL - 2023
  */
 public interface Timer
 {

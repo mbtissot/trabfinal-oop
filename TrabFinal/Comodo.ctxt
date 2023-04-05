@@ -1,15 +1,21 @@
 #BlueJ class context
 comment0.target=Comodo
+comment0.text=\n\ Classe\ Comodo\ implementa\ objetos\ do\ tipo\ Comodo.\ Comodos\ possuem\ um\ nome,\ e\ uma\ lista\ de\ Devices\ que\ se\ encontram\ no\ comodo.\n\n\ @author\ Matheus\ B\ Tissot\ -\ 00305657\n\ @version\ APRIL\ -\ 2023\n
 comment1.params=name
 comment1.target=Comodo(java.lang.String)
+comment1.text=\n\ Construtor\ para\ objetos\ da\ classe\ Comodo\n\ @param\ nome\ (String)\n
 comment2.params=
 comment2.target=java.lang.String\ getName()
-comment3.params=device
-comment3.target=void\ addDevice(Device)
+comment2.text=Getters\ e\ setter
+comment3.params=
+comment3.target=java.util.List\ getDevices()
 comment4.params=device
-comment4.target=void\ rmDevice(Device)
-comment5.params=
-comment5.target=java.util.List\ getDevices()
+comment4.target=void\ addDevice(Device)
+comment4.text=\ Metodo\ addDevice\ adiciona\ um\ Device\ a\ lista\ de\ Devices\ do\ Comodo\n@param\ device\ (Device)
+comment5.params=device
+comment5.target=void\ rmDevice(Device)
+comment5.text=\ Metodo\ rmDevice\ remove\ um\ Device\ da\ lista\ de\ Devices\ do\ Comodo\n@param\ device\ (Device)
 comment6.params=
 comment6.target=java.lang.String\ toString()
+comment6.text=\ Metodo\ toString\ da\ classe\ Comodo.\n\ @returns\ String\ o\ nome\ do\ Comodo\n
 numComments=7

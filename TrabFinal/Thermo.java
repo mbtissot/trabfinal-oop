@@ -2,28 +2,30 @@
 /**
  * Classe para dispositivos com temperatura controlada (ares condicionados, fornos, geladeiras, etc.)
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Matheus B Tissot - 00305657
+ * @version APRIL - 2023
  */
 public class Thermo extends Device
 {
-    // instance variables - replace the example below with your own
-    private int temperature;
-    private int tMin;
-    private int tMax;
-    private boolean hasTimer;
+    /** Variaveis de instancia da classe Thermo */
+    private int temperature;   // Temperatura que o dispositivo se encontra agora
+    private int tMin = -20;    // Temperatura minima que o dispositivo pode ter. Padrao: -20 (Minima de um freezer)
+    private int tMax = 300;    // Temperatura maxima que o dispositivo pode ter. Padrao: 300 (maxima de um forno)
+    private int avgTemp;       // Temperatura media entre a minima e a maxima.
     /**
-     * Constructor for objects of class Thermo
+     * Construtor para objetos da classe Thermo
+     * @param nome (String), tMin (int), tMax (int), timer (boolean)
      */
     public Thermo(String name, int tMin, int tMax, boolean timer)
     {
         super(name, timer);     
         this.tMax = tMax;
         this.tMin = tMin;
-        this.temperature = (tMin+tMax)/2;
-        
+        this.avgTemp = (tMin+tMax)/2;
+        this.temperature = avgTemp;
     }
 
+    /** Getters e Setters */
     public int getTemp(){
         return this.temperature;
     }
@@ -47,18 +49,12 @@ public class Thermo extends Device
     public int getTMax(){
         return this.tMax;
     }
+    /** Fim dos getters e setters */
     
+    /** Metodo toString da classe Thermo.
+     * @returns String com os dados mostrados pela toString do Device + a Temperatura do Device
+       */
     public String toString() {
-        String timer = "";
-        if(this.getTimer()){
-            timer = timer+" - Tempo: " + this.getTimeLeft();
-        }
-        return super.toString() + " - T:" + this.temperature + timer;
-    }
-    
-    public void countdown(){
-        if(this.getTimeLeft()>0){
-            this.setTimeLeft(this.getTimeLeft()-1);
-        }
+        return super.toString() + " - T:" + this.temperature;
     }
 }

@@ -4,32 +4,43 @@ import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.event.*;
 import javax.swing.Timer;
+import java.io.*;
 
-public class Application extends JFrame {
+/**
+ * Classe Application faz o programa inteiro rodar. Aqui eh criada a janela e os botoes que o usuario vai interagir
+ *
+ * @author Matheus B Tissot - 00305657
+ * @version APRIL - 2023
+ */
+
+public class Application extends JFrame{
+    // Elementos mais escondidos da janela
     private Map<Comodo, DefaultListModel<Device>> comodosMap = new HashMap<>();
+    private ArrayList<Comodo> comodosList = new ArrayList<>();
     private JComboBox<Comodo> comodosDropdown = new JComboBox<>();
     private JList<Device> devicesList = new JList<>();
     private JScrollPane devicesScrollPane = new JScrollPane(devicesList);
+    // Botoes
     private JButton addComodoButton = new JButton("+");
     private JButton addDeviceButton = new JButton("Add Device");
     private JButton editDeviceButton = new JButton("Edit");
     private JButton removeDeviceButton = new JButton("X");
+    private JButton listarButton = new JButton("Listar");
+    private JButton salvarButton = new JButton("Salvar");
 
-    public Application() {
-        super("Gerenciador de Casa Inteligente");
+    public Application() throws ValorInvalido {
+        super("Gerenciador de Casa Inteligente"); // Nome da Janela
         DefaultListModel<Object> devicesListModel = new DefaultListModel<>();
         setSize(400, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        Timer timerGlobal;
 
-        // Create the UI components
+        // Componentes da Janela
         JPanel contentPane = new JPanel(new BorderLayout());
         JPanel header = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JPanel body = new JPanel(new BorderLayout());
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        // Comopoentes do header
+        // Comoponentes do header
         header.add(new JLabel("Selecione um Comodo:"));
         header.add(comodosDropdown);
         header.add(addComodoButton);
@@ -38,15 +49,18 @@ public class Application extends JFrame {
         body.add(devicesScrollPane);
 
         // Adicionando botoes
+        buttons.add(listarButton);
         buttons.add(addDeviceButton);
         buttons.add(editDeviceButton);
         buttons.add(removeDeviceButton);
-        // TODO Botao que salva tudo p arquivo
-        //TODO Botao que lista todos
+        buttons.add(salvarButton);
 
-        // Action listener p botoes
+        
         addComodoButton.addActionListener(new ActionListener() {
             @Override
+            /** ActionListener do botao addComodo.
+            * Abre um Dialog pedindo o nome do Comodo para o Usuario
+            */
             public void actionPerformed(ActionEvent e) {
                 String name = JOptionPane.showInputDialog("Adicione um comodo:");
                 if (name != null && !name.isEmpty()) {
@@ -54,22 +68,89 @@ public class Application extends JFrame {
                     DefaultListModel<Device> devicesModel = new DefaultListModel<>();
                     comodosMap.put(comodo, devicesModel);
                     comodosDropdown.addItem(comodo);
+                    comodosList.add(comodo);
                 }
+            }
+        });
+        
+        listarButton.addActionListener(new ActionListener() {
+            @Override
+            /** ActionListener do botao Listar.
+            * Abre um dialog com uma lista dos Comodos, e os dispositivos dentro do comodo, em formato de Arvore
+            */
+            public void actionPerformed(ActionEvent e) {
+                String lista = "";
+                JPanel panel = new JPanel(new BorderLayout());
+                for(Comodo comodo: comodosList){
+                    lista = lista + "\n* " + comodo.getName();
+                    for(Device device: comodo.getDevices()){
+                        lista = lista + "\n  - " + device.toString();
+                    }
+                }
+                JOptionPane.showMessageDialog(null, lista);
+            }
+        });
+        
+        salvarButton.addActionListener(new ActionListener() {
+            @Override
+            /** ActionListener do botao Salvar.
+            * Abre um dialog pedindo o nome do arquivo para Salvar o estado atual da Casa.
+            * Se o arquivo existir, sobreescreve.
+            * Se nao existir, cria o arquivo.
+            * Se o usuario nao informar nome, salva como "casa.txt"
+            */
+            public void actionPerformed(ActionEvent e) {
+                JPanel panel = new JPanel(new BorderLayout());
+                String nomeFile = JOptionPane.showInputDialog("Deseja salvar a casa em qual arquivo? (Padrao: casa.txt)");
+                if(nomeFile == null || nomeFile.isEmpty()){
+                    nomeFile = "casa.txt";
+                }
+                String path = "./"+nomeFile;
+                File salvar = new File(path);
+                try{
+                    if(!salvar.exists()){
+                        salvar.createNewFile();
+                    }
+                    FileWriter fw = new FileWriter(salvar, false);
+                    BufferedWriter bw = new BufferedWriter(fw);
+                    bw.write("Ultimo estado da casa: ");
+                    bw.newLine();
+                    for(Comodo comodo: comodosList){
+                        bw.write("* " + comodo.getName()+"\n");
+                        for(Device device: comodo.getDevices()){
+                            bw.write("  - " + device.toString()+"\n");
+                        }
+                    }
+                    bw.close();
+                    fw.close();
+                }
+                catch(IOException ioe){
+                    System.err.println("Erro ao escrever no arquivo " + nomeFile);
+                }
+                JOptionPane.showMessageDialog(null, "Casa salva no arquivo " + nomeFile);
             }
         });
         
         
         editDeviceButton.addActionListener(new ActionListener() {
             @Override
+            /** ActionListener do botao EditDevice.
+            * Abre um dialog com elementos relevantes para cada tipo de Device.
+            * Para todos os Devices: Checkbox para ligar/desligar o Device.
+            * Se o Device eh Thermo: Slider para temperatura.
+            * Se o Device eh Intense: RadioButton para a intensidade.
+            * Se o Device tem Timer, permite o usuario editar o tempo para o Timer.
+            */
             public void actionPerformed(ActionEvent e) {
                 Comodo comodo = (Comodo) comodosDropdown.getSelectedItem();
                 Device selDevice = (Device) devicesList.getSelectedValue();
                 
-                JCheckBox onOff = new JCheckBox("Ligado: ");
+                JCheckBox onOff = new JCheckBox(": Ligado");
                 JTextField tempo = new JTextField("0");
                 JLabel tempoLabel = new JLabel("Tempo");
                 tempo.setEnabled(false);
                 
+                /** Caso em que o Device eh do tipo Thermo */
                 if(selDevice instanceof Thermo){
                     Thermo selThermo = (Thermo) selDevice;
                     
@@ -116,15 +197,32 @@ public class Application extends JFrame {
                         }
                     });
                     
-                    int abc = JOptionPane.showConfirmDialog(null, panel, "Insira o nome do device, e as propriedades dele", JOptionPane.OK_CANCEL_OPTION);
-                    if(abc==JOptionPane.OK_OPTION){
+                    int confirm = JOptionPane.showConfirmDialog(null, panel, "Insira o nome do device, e as propriedades dele", JOptionPane.OK_CANCEL_OPTION);
+                    if(confirm==JOptionPane.OK_OPTION){
                         selThermo.setTemp(temp.getValue());
                         selThermo.setState(onOff.isSelected());
-                        if(selThermo.getTimer()){selThermo.setTimeLeft(Integer.parseInt(tempo.getText()));}
+                        
+                        if(selThermo.getTimer()){ // Se o Device tem um Timer, entao pede o tempo do Timer
+                            int valorTempo=0;
+                            try{
+                                valorTempo = Integer.parseInt(tempo.getText());
+                                if(valorTempo<0){
+                                    throw new ValorInvalido("Valor negativo no Timer. Foi resetado para 0");
+                                }
+                            }
+                            catch(NumberFormatException excep){
+                                valorTempo = 0;
+                            }
+                            catch(ValorInvalido excep){
+                                valorTempo=0;
+                            }
+                            finally{selThermo.setTimeLeft(valorTempo);}
+                        }
                         updateDevicesList(comodo);
                     }
                 }
                 
+                /** Caso em que o device eh do tipo Intense*/
                 if(selDevice instanceof Intense){
                     Intense selIntense = (Intense) selDevice;
                     if(selIntense.getTimer()){tempo.setEnabled(true);}
@@ -171,26 +269,32 @@ public class Application extends JFrame {
                     } else {
                         switch(selIntense.getIntensity()){
                             case 1:
+                                onOff.setSelected(true);
                                 um.setSelected(true);
                                 break;
                             case 2:
+                                onOff.setSelected(true);
                                 dois.setSelected(true);
                                 break;
                             case 3:
+                                onOff.setSelected(true);
                                 tres.setSelected(true);
                                 break;
                         }
                     }
                     
-                    int abc = JOptionPane.showConfirmDialog(null, panel, "Edita as propriedades do dispositivo", JOptionPane.OK_CANCEL_OPTION);
-                    if(abc==JOptionPane.OK_OPTION){
+                    int confirm = JOptionPane.showConfirmDialog(null, panel, "Edita as propriedades do dispositivo", JOptionPane.OK_CANCEL_OPTION);
+                    if(confirm==JOptionPane.OK_OPTION){
                         selIntense.setIntensity(Integer.parseInt(intensity.getSelection().getActionCommand()));
                         selIntense.setState(onOff.isSelected());
+                        if(selIntense.getIntensity()>0){selIntense.setState(true);}
+                        else{selIntense.setState(false);}
                         if(selIntense.getTimer()){selIntense.setTimeLeft(Integer.parseInt(tempo.getText()));}
                         updateDevicesList(comodo);
                     }
                 }
                 
+                /** Caso em que o dispositivo nao eh Thermo nem Intense*/
                 if(selDevice instanceof onOff){
                     onOff selOnOff = (onOff) selDevice;
                     if(selOnOff.getTimer()){tempo.setEnabled(true);}
@@ -209,8 +313,8 @@ public class Application extends JFrame {
                     
                     onOff.setSelected(selOnOff.getState());
 
-                    int abc = JOptionPane.showConfirmDialog(null, panel, "Edita as propriedades do dispositivo", JOptionPane.OK_CANCEL_OPTION);
-                    if(abc==JOptionPane.OK_OPTION){
+                    int confirm = JOptionPane.showConfirmDialog(null, panel, "Edita as propriedades do dispositivo", JOptionPane.OK_CANCEL_OPTION);
+                    if(confirm==JOptionPane.OK_OPTION){
                         selOnOff.setState(onOff.isSelected());
                         if(selOnOff.getTimer()){selOnOff.setTimeLeft(Integer.parseInt(tempo.getText()));}
                         updateDevicesList(comodo);
@@ -219,6 +323,7 @@ public class Application extends JFrame {
             }
             });
 
+            /** Action Listener para o Timer contar o tempo dos dispositivos que tem Timer ativo e estao ligados */
         ActionListener al=new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                 Comodo comodo = (Comodo) comodosDropdown.getSelectedItem();
@@ -238,6 +343,7 @@ public class Application extends JFrame {
             timer.start();
             
         
+            /** ActionListener do botao que remove um dispositivo do Comodo*/
         removeDeviceButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -254,9 +360,12 @@ public class Application extends JFrame {
                 }
             });
         
+            /** ActionListener do botao de adicionar dispositivo ao Comodo.
+               Mostra um dialog com opçoes pro usuario escolher Nome do dispositivo, se eh Thermo, Intense ou nenhum, e se tem
+               ou nao tem Timer */
         addDeviceButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e){
                 Comodo comodo = (Comodo) comodosDropdown.getSelectedItem();
                 JTextField nome = new JTextField();
                 JCheckBox temp = new JCheckBox("Thermo: ");
@@ -281,9 +390,9 @@ public class Application extends JFrame {
                 JPanel panel = new JPanel();
                 panel.setLayout(new GridLayout(3, 1));
                 panel.add(nome);
+                panel.add(timer);
                 panel.add(temp);
                 panel.add(intens);
-                panel.add(timer);
                 
                 int confirm = JOptionPane.showConfirmDialog(null, panel, "Insira o nome do device, e as propriedades dele", JOptionPane.OK_CANCEL_OPTION);
                 if (comodo != null && confirm == JOptionPane.OK_OPTION) {
@@ -293,6 +402,7 @@ public class Application extends JFrame {
                     boolean intensState = intens.isSelected();
                     boolean timerState = timer.isSelected();
                     if (nomeDev != null && !nomeDev.isEmpty()) {
+                        /** Caso em que o Device eh do tipo Thermo desenvolvido por Alvaro Guglielmin Becker */ 
                         if(tempState){
                             // Pop up pedindo a temperatura minima e maxima do dispositivo
                             JTextField min = new JTextField();
@@ -307,8 +417,24 @@ public class Application extends JFrame {
                             int con = JOptionPane.showConfirmDialog(null, popup, "Insira as temperaturas minima e maxima do dispositivo", JOptionPane.OK_CANCEL_OPTION);
                             
                             // Le as temperaturas
-                            int tmin = Integer.parseInt(min.getText());
-                            int tmax = Integer.parseInt(max.getText());
+                            int tmin=0;
+                            int tmax=0;
+                            
+                            try{
+                                try{tmin = Integer.parseInt(min.getText());}
+                                catch(NumberFormatException excep){tmin = -20;}
+                                try{tmax = Integer.parseInt(max.getText());}
+                                catch(NumberFormatException excep){tmax = 300;}
+                            if(tmin>tmax){
+                                throw new ValorInvalido("Intervalo proibido: temperatura minima eh maior que temperatura maxima");
+                                }
+                            }
+                            catch(ValorInvalido excep){
+                                /** Caso o usuario coloque temperatura minima maior que a temperatura maxima */
+                                int seg = tmin;
+                                tmin=tmax;
+                                tmax=seg;
+                            }
                             
                             // Cria o dispositivo
                             Thermo device;
@@ -347,6 +473,7 @@ public class Application extends JFrame {
                 }
         });
 
+        /** ActionListener do menu dropdown de Comodos */
         comodosDropdown.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -365,12 +492,15 @@ public class Application extends JFrame {
         setContentPane(contentPane);
     }
 
+    /** Metodo que atualiza a lista de dispositivos do comodo.
+     * @param comodo (Comodo)
+       */
     private void updateDevicesList(Comodo comodo) {
         DefaultListModel<Device> devicesModel = comodosMap.get(comodo);
         devicesList.setModel(devicesModel);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ValorInvalido{
         Application app = new Application();
         app.setVisible(true);
     }
