@@ -27,6 +27,9 @@ public class Application extends JFrame{
     private JButton removeDeviceButton = new JButton("X");
     private JButton listarButton = new JButton("Listar");
     private JButton salvarButton = new JButton("Salvar");
+    
+    private JMenuBar menuBar = new JMenuBar();
+    
 
     public Application() throws ValorInvalido {
         super("Gerenciador de Casa Inteligente"); // Nome da Janela
@@ -34,6 +37,15 @@ public class Application extends JFrame{
         setSize(400, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        JMenu menu = new JMenu("Menu");
+        menu.setMnemonic(KeyEvent.VK_A);
+        menuBar.add(menu);
+        
+        JMenuItem testarMenuItem = new JMenuItem("Teste");
+        testarMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK));
+        menu.add(testarMenuItem);
+        
+        
         // Componentes da Janela
         JPanel contentPane = new JPanel(new BorderLayout());
         JPanel header = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -326,17 +338,19 @@ public class Application extends JFrame{
             /** Action Listener para o Timer contar o tempo dos dispositivos que tem Timer ativo e estao ligados */
         ActionListener al=new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                Comodo comodo = (Comodo) comodosDropdown.getSelectedItem();
-                if(comodo!=null){
-                    for(Device device: comodo.getDevices()){
-                        devicesList.repaint();
-                        if(device.getTimer() && device.getState() && (device.getTimeLeft()!=0)){
-                            device.countdown();
+                    for(Comodo comodo: comodosList){
+                        if(comodo!=null){
+                            for(Device device: comodo.getDevices()){
+                                devicesList.repaint();
+                                if(device.getTimer() && device.getState() && (device.getTimeLeft()!=0)){
+                                    device.countdown();
+                                }
+                                if(device.getTimeLeft()==0 && device.getTimer()){
+                                device.setState(false);}
+                            }
                         }
-                        if(device.getTimeLeft()==0 && device.getTimer()){
-                        device.setState(false);}
                     }
-                }}
+                }
             };
             
             Timer timer = new Timer(1000, al);
@@ -484,8 +498,68 @@ public class Application extends JFrame{
                 }
             }
         });
+        
+        // Action Listener do item Testar do Menu
+        testarMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                /** Criando a cozinha */
+                Comodo cozinha = new Comodo("Cozinha");
+                DefaultListModel<Device> devicesModel = new DefaultListModel<>();
+                comodosMap.put(cozinha, devicesModel);
+                comodosDropdown.addItem(cozinha);
+                comodosList.add(cozinha);
+                
+                /** Devices da Cozinha */
+                //Lampada - Timer 30s - Ligado
+                onOff lampadaCoz = new onOff("Lampada Cozinha", true);
+                lampadaCoz.setState(true);
+                lampadaCoz.setTimeLeft(30);
+                devicesModel = comodosMap.get(cozinha);
+                devicesModel.addElement(lampadaCoz);
+                cozinha.addDevice(lampadaCoz);
+                updateDevicesList(cozinha);
+                
+                /** Criando a sala*/
+                Comodo sala = new Comodo("Sala");
+                 devicesModel = new DefaultListModel<>();
+                comodosMap.put(sala, devicesModel);
+                comodosDropdown.addItem(sala);
+                comodosList.add(sala);
+                
+                /** Devices da sala: */
+                //Ar condicionado - Timer 60s - Ligado
+                Thermo arCondicionado = new Thermo("Ar Cond.", 16, 28, true);
+                arCondicionado.setState(true);
+                arCondicionado.setTimeLeft(60);
+                devicesModel = comodosMap.get(sala);
+                devicesModel.addElement(arCondicionado);
+                sala.addDevice(arCondicionado);
+                updateDevicesList(sala);
+                
+                //Lampada - Sem Timer - Ligado
+                onOff lampadaSala = new onOff("Lampada", false);
+                lampadaSala.setState(true);
+                devicesModel = comodosMap.get(sala);
+                devicesModel.addElement(lampadaSala);
+                sala.addDevice(lampadaSala);
+                updateDevicesList(sala);
+                
+                //Ventilador - Timer 40s - Ligado
+                Intense ventilador = new Intense("Ventilador", true);
+                ventilador.setState(true);
+                ventilador.setIntensity(2);
+                ventilador.setTimeLeft(40);
+                devicesModel = comodosMap.get(sala);
+                devicesModel.addElement(ventilador);
+                sala.addDevice(ventilador);
+                updateDevicesList(sala);
+                
+                comodosDropdown.setSelectedItem(cozinha);
+            }
+        });
 
         // Adiciona componentes p contentPane
+        this.setJMenuBar(menuBar);
         contentPane.add(header, BorderLayout.NORTH);
         contentPane.add(body, BorderLayout.CENTER);
         contentPane.add(buttons, BorderLayout.SOUTH);
