@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=Intense
+comment0.text=\n\ Classe\ Intense\ implementa\ objetos\ que\ alem\ de\ ligar\ e\ desligar,\ possuem\ uma\ intensidade.\n\ Exemplo\:\ ventiladores\ possuem,\ normalmente,\ tres\ 'for\u00E7as'.\n\n\ @author\ Matheus\ B\ Tissot\ -\ 00305657\n\ @version\ APRIL\ -\ 2023\n
+comment1.params=name\ timer
+comment1.target=Intense(java.lang.String,\ boolean)
+comment1.text=\n\ Constructor\ for\ objects\ of\ class\ Intense\n
+comment2.params=
+comment2.target=int\ getIntensity()
+comment2.text=Getters\ e\ setters
+comment3.params=intens
+comment3.target=void\ setIntensity(int)
+comment4.params=
+comment4.target=java.lang.String\ toString()
+comment4.text=\ Metodo\ toString\ mostra\ as\ informa\u00E7oes\ mostradas\ pelo\ toString\ do\ Device\ +\ a\ intensidade\ do\ Device\n
+numComments=5
