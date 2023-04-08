@@ -5,6 +5,7 @@ import java.awt.event.*;
 import javax.swing.event.*;
 import javax.swing.Timer;
 import java.io.*;
+import javax.imageio.*;
 
 /**
  * Classe Application faz o programa inteiro rodar. Aqui eh criada a janela e os botoes que o usuario vai interagir
@@ -41,7 +42,7 @@ public class Application extends JFrame{
         menu.setMnemonic(KeyEvent.VK_A);
         menuBar.add(menu);
         
-        JMenuItem testarMenuItem = new JMenuItem("Teste");
+        JMenuItem testarMenuItem = new JMenuItem("Testar");
         testarMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK));
         menu.add(testarMenuItem);
         
@@ -165,6 +166,13 @@ public class Application extends JFrame{
                 /** Caso em que o Device eh do tipo Thermo */
                 if(selDevice instanceof Thermo){
                     Thermo selThermo = (Thermo) selDevice;
+                    ImageIcon icon;
+                    try{
+                    icon = new ImageIcon("thermometer2.png");}
+                    catch(Exception excep){
+                        icon = null;
+                    }
+                    
                     
                     JLabel valueLabel = new JLabel("Temperatura");
                     JTextField value = new JTextField();
@@ -209,7 +217,7 @@ public class Application extends JFrame{
                         }
                     });
                     
-                    int confirm = JOptionPane.showConfirmDialog(null, panel, "Insira o nome do device, e as propriedades dele", JOptionPane.OK_CANCEL_OPTION);
+                    int confirm = JOptionPane.showConfirmDialog(null, panel, "Insira o nome do device, e as propriedades dele", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, icon);
                     if(confirm==JOptionPane.OK_OPTION){
                         selThermo.setTemp(temp.getValue());
                         selThermo.setState(onOff.isSelected());
@@ -237,6 +245,13 @@ public class Application extends JFrame{
                 /** Caso em que o device eh do tipo Intense*/
                 if(selDevice instanceof Intense){
                     Intense selIntense = (Intense) selDevice;
+                    ImageIcon icon;
+                    try{
+                    icon = new ImageIcon("intensity2.png");}
+                    catch(Exception excep){
+                        icon = null;
+                    }
+                    
                     if(selIntense.getTimer()){tempo.setEnabled(true);}
                     ButtonGroup intensity = new ButtonGroup();
                     JRadioButton zero = new JRadioButton("0");
@@ -295,7 +310,7 @@ public class Application extends JFrame{
                         }
                     }
                     
-                    int confirm = JOptionPane.showConfirmDialog(null, panel, "Edita as propriedades do dispositivo", JOptionPane.OK_CANCEL_OPTION);
+                    int confirm = JOptionPane.showConfirmDialog(null, panel, "Edita as propriedades do dispositivo", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, icon);
                     if(confirm==JOptionPane.OK_OPTION){
                         selIntense.setIntensity(Integer.parseInt(intensity.getSelection().getActionCommand()));
                         selIntense.setState(onOff.isSelected());
@@ -309,6 +324,14 @@ public class Application extends JFrame{
                 /** Caso em que o dispositivo nao eh Thermo nem Intense*/
                 if(selDevice instanceof onOff){
                     onOff selOnOff = (onOff) selDevice;
+                    
+                    ImageIcon icon;
+                    try{
+                    icon = new ImageIcon("switch2.png");}
+                    catch(Exception excep){
+                        icon = null;
+                    }
+                    
                     if(selOnOff.getTimer()){tempo.setEnabled(true);}
                     JPanel panel = new JPanel();
                     
@@ -325,7 +348,7 @@ public class Application extends JFrame{
                     
                     onOff.setSelected(selOnOff.getState());
 
-                    int confirm = JOptionPane.showConfirmDialog(null, panel, "Edita as propriedades do dispositivo", JOptionPane.OK_CANCEL_OPTION);
+                    int confirm = JOptionPane.showConfirmDialog(null, panel, "Edita as propriedades do dispositivo", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, icon);
                     if(confirm==JOptionPane.OK_OPTION){
                         selOnOff.setState(onOff.isSelected());
                         if(selOnOff.getTimer()){selOnOff.setTimeLeft(Integer.parseInt(tempo.getText()));}
@@ -382,9 +405,9 @@ public class Application extends JFrame{
             public void actionPerformed(ActionEvent e){
                 Comodo comodo = (Comodo) comodosDropdown.getSelectedItem();
                 JTextField nome = new JTextField();
-                JCheckBox temp = new JCheckBox("Thermo: ");
-                JCheckBox intens = new JCheckBox("Intensity: ");
-                JCheckBox timer = new JCheckBox("Timer: ");
+                JCheckBox temp = new JCheckBox(": Thermo");
+                JCheckBox intens = new JCheckBox(": Intensidade");
+                JCheckBox timer = new JCheckBox(": Timer");
 
             temp.addItemListener(new ItemListener() {
                 public void itemStateChanged(ItemEvent e) {
@@ -408,7 +431,7 @@ public class Application extends JFrame{
                 panel.add(temp);
                 panel.add(intens);
                 
-                int confirm = JOptionPane.showConfirmDialog(null, panel, "Insira o nome do device, e as propriedades dele", JOptionPane.OK_CANCEL_OPTION);
+                int confirm = JOptionPane.showConfirmDialog(null, panel, "Insira nome e propriedades", JOptionPane.OK_CANCEL_OPTION);
                 if (comodo != null && confirm == JOptionPane.OK_OPTION) {
                     DefaultListModel<Device> devicesModel = comodosMap.get(comodo);
                     String nomeDev = nome.getText();
