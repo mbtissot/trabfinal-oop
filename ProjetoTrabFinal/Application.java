@@ -14,6 +14,10 @@ import javax.imageio.*;
  * @version APRIL - 2023
  */
 
+
+/**
+    Trabalho de Matheus Tissot, Alvaro Guglielmin e Eduardo Viegas (ler comentário na entrega do Moodle)
+*/
 public class Application extends JFrame{
     // Elementos mais escondidos da janela
     private Map<Comodo, DefaultListModel<Device>> comodosMap = new HashMap<>();
@@ -113,34 +117,41 @@ public class Application extends JFrame{
             * Se o usuario nao informar nome, salva como "casa.txt"
             */
             public void actionPerformed(ActionEvent e) {
+                boolean valido = true;
                 JPanel panel = new JPanel(new BorderLayout());
                 String nomeFile = JOptionPane.showInputDialog("Deseja salvar a casa em qual arquivo? (Padrao: casa.txt)");
-                if(nomeFile == null || nomeFile.isEmpty()){
+                
+                if(nomeFile == null){
+                    valido = false;
+                }               
+                if(valido){
+                    if(nomeFile.isEmpty()){
                     nomeFile = "casa.txt";
-                }
-                String path = "./"+nomeFile;
-                File salvar = new File(path);
-                try{
-                    if(!salvar.exists()){
-                        salvar.createNewFile();
                     }
-                    FileWriter fw = new FileWriter(salvar, false);
-                    BufferedWriter bw = new BufferedWriter(fw);
-                    bw.write("Ultimo estado da casa: ");
-                    bw.newLine();
-                    for(Comodo comodo: comodosList){
-                        bw.write("* " + comodo.getName()+"\n");
-                        for(Device device: comodo.getDevices()){
-                            bw.write("  - " + device.toString()+"\n");
+                    String path = "./"+nomeFile;
+                    File salvar = new File(path);
+                    try{
+                        if(!salvar.exists()){
+                            salvar.createNewFile();
                         }
+                        FileWriter fw = new FileWriter(salvar, false);
+                        BufferedWriter bw = new BufferedWriter(fw);
+                        bw.write("Ultimo estado da casa: ");
+                        bw.newLine();
+                        for(Comodo comodo: comodosList){
+                            bw.write("* " + comodo.getName()+"\n");
+                            for(Device device: comodo.getDevices()){
+                                bw.write("  - " + device.toString()+"\n");
+                            }
+                        }
+                        bw.close();
+                        fw.close();
                     }
-                    bw.close();
-                    fw.close();
+                    catch(IOException ioe){
+                        System.err.println("Erro ao escrever no arquivo " + nomeFile);
+                    }
+                    JOptionPane.showMessageDialog(null, "Casa salva no arquivo " + nomeFile);
                 }
-                catch(IOException ioe){
-                    System.err.println("Erro ao escrever no arquivo " + nomeFile);
-                }
-                JOptionPane.showMessageDialog(null, "Casa salva no arquivo " + nomeFile);
             }
         });
         

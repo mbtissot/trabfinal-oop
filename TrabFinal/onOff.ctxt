@@ -1,8 +1,0 @@
-#BlueJ class context
-comment0.target=onOff
-comment0.text=\n\ Classe\ onOff\ implementa\ objetos\ que\ ligam\ e\ desligam.\n\ Exemplo\:\ lampadas.\n\n\ @author\ Matheus\ B\ Tissot\ -\ 00305657\n\ @version\ APRIL\ -\ 2023\n
-comment1.params=name\ hasTimer
-comment1.target=onOff(java.lang.String,\ boolean)
-comment2.params=
-comment2.target=java.lang.String\ toString()
-numComments=3
