@@ -1,5 +1,7 @@
 # (Toy model) Gerenciador de Smart House
 
+! Alterações feitas em 8 de abril/2023 em diante não fazem parte do trabalho, mas sim alterações que eu fiz por achar necessárias. Algumas apenas QOL, outras alterações de comportamento.
+
 Esse projeto é o trabalho final da cadeira Programação Orientada a Objetos, em 2022/2.
 O grupo que fez este trabalho são os alunos Matheus B. Tissot, Eduardo Viegas e Alvaro Guglielmin.
 
